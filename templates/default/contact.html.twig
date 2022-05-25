@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+{% form_theme form 'bootstrap_4_layout.html.twig' %}
+
+{% block title %}Contact{% endblock %}
+
+{% block body %}
+    <section class="w-50 m-auto">
+        <h1 class="mb-5">Contact</h1>
+
+        {{ form_start(form) }}
+        <div class="mb-3">
+            {{ form_row(form.name) }}
+        </div>
+        <div class="mb-3">
+            {{ form_row(form.email) }}
+        </div>
+        <div class="mb-3">
+            {{ form_row(form.subject) }}
+        </div>
+        <div class="mb-3">
+            {{ form_row(form.message) }}
+        </div>
+
+        <button type="submit" class="btn btn-secondary">Send</button>
+        {{ form_end(form) }}
+    </section>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Movie index{% endblock %}
+
+{% block body %}
+    <h1>Movie index</h1>
+
+    <form method="get" action="{{ path('app_movie_search') }}">
+        <div class="input-group">
+            <input aria-label="Search a movie" placeholder="Search a movie" class="form-control" type="search" id="title" name="title" />
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary pl-5 pr-5" type="submit">Send</button>
+            </div>
+        </div>
+    </form>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Country</th>
+                <th>ReleasedAt</th>
+                <th>Price</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for movie in movies %}
+            <tr>
+                <td>{{ movie.id }}</td>
+                <td>{{ movie.title }}</td>
+                <td>{{ movie.country }}</td>
+                <td>{{ movie.releasedAt ? movie.releasedAt|date('Y-m-d') : '' }}</td>
+                <td>{{ movie.price }}</td>
+                <td>
+                    <a class="btn btn-outline-secondary btn-sm" href="{{ path('app_movie_show', {'id': movie.id}) }}">show</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="14">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
