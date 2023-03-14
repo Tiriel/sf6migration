@@ -1,15 +1,23 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Movies{% endblock %}
+{% block title %}Sensio TV+{% endblock %}
+
+{% block header %}
+    {{ parent() }}
+    <section class="bg-black h-100 p-5">
+        <div class="text-white text-center h-100">
+            <h1 class="display-3 font-weight-bold m-0">SensioTV+</h1>
+        </div>
+    </section>
+{% endblock %}
 
 {% block body %}
-    <div class="example-wrapper">
-        <h1>Available movies</h1>
-
-        <section class="row row-cols-3 mt-5">
+    <section>
+        <h2 class="text-center">Latest movies:</h2>
+        <div class="row row-cols-3 pt-5">
             {% for movie in movies ?? [] %}
                 <div class="col">
-                    <a href="{{ path('app_movie_show', {'id': movie.id}) }}">
+                    <a href="{{ path('app_movie_show', {id: movie.id}) }}">
                         <div class="card w-75">
                             <img src="{{ movie.poster }}" alt="{{ movie.poster }}">
                             <div class="card-img-overlay text-white">
@@ -22,6 +30,6 @@
             {% else %}
                 <p>No movies in database yet...</p>
             {% endfor %}
-        </section>
-    </div>
+        </div>
+    </section>
 {% endblock %}

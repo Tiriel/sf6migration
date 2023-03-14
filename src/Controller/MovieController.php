@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Movie;
-use App\Provider\MovieProvider;
+use App\Form\MovieType;
 use App\Repository\MovieRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,43 +11,67 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/movie", name="app_movie_")
+ * @Route("/movie")
  */
 class MovieController extends AbstractController
 {
     /**
-     * @Route("/", name="index", methods={"GET"})
+     * @Route("", name="app_movie_index")
      */
-    public function index(MovieRepository $movieRepository): Response
+    public function index(MovieRepository $repository): Response
     {
         return $this->render('movie/index.html.twig', [
-            'movies' => $movieRepository->findAll(),
+            'movies' => $repository->findAll(),
         ]);
     }
 
     /**
-     * @Route("/{id<\d+>}", name="show", methods={"GET"})
+     * @Route("/new", name="app_movie_new")
      */
-    public function show(Movie $movie): Response
+    public function new(Request $request, MovieRepository $repository): Response
     {
-        return $this->render('movie/show.html.twig', [
-            'movie' => $movie,
-        ]);
-    }
+        $movie = new Movie();
+        $form = $this->createForm(MovieType::class, $movie);
 
-    /**
-     * @Route("/search", name="search", methods={"GET"})
-     */
-    public function search(Request $request, MovieRepository $repository, MovieProvider $movieProvider)
-    {
-        $title = $request->query->get('title');
-        $movie = $repository->findOneBy(['title' => $title]);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $repository->save($movie, true);
 
-        if (!$movie) {
-            $movie = $movieProvider->getMovieByTitle($title);
-            $repository->add($movie);
+            return $this->redirectToRoute('app_movie_show', ['id' => $movie->getId()]);
         }
 
-        return $this->redirectToRoute('app_movie_show', ['id' => $movie->getId()]);
+        return $this->render('movie/new.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/{id}", name="app_movie_show", requirements={"id": "\d+"})
+     */
+    public function show(int $id, MovieRepository $repository): Response
+    {
+        return $this->render('movie/show.html.twig', [
+            'movie' => $repository->find($id),
+        ]);
+    }
+
+    /**
+     * @Route("/{id}/edit", name="app_movie_edit", requirements={"id": "\d+"})
+     */
+    public function edit(int $id, Request $request, MovieRepository $repository): Response
+    {
+        $movie = $repository->find($id);
+        $form = $this->createForm(MovieType::class, $movie);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $repository->save($movie, true);
+
+            return $this->redirectToRoute('app_movie_show', ['id' => $movie->getId()]);
+        }
+
+        return $this->render('movie/edit.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 }

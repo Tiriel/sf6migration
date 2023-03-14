@@ -11,12 +11,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/admin/movie", name="app_admin_movie_")
+ * @Route("/admin/movie")
  */
 class MovieController extends AbstractController
 {
     /**
-     * @Route("/", name="index", methods={"GET"})
+     * @Route("/", name="app_admin_movie_index", methods={"GET"})
      */
     public function index(MovieRepository $movieRepository): Response
     {
@@ -26,7 +26,7 @@ class MovieController extends AbstractController
     }
 
     /**
-     * @Route("/new", name="new", methods={"GET", "POST"})
+     * @Route("/new", name="app_admin_movie_new", methods={"GET", "POST"})
      */
     public function new(Request $request, MovieRepository $movieRepository): Response
     {
@@ -35,7 +35,8 @@ class MovieController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $movieRepository->add($movie);
+            $movieRepository->save($movie, true);
+
             return $this->redirectToRoute('app_admin_movie_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -46,7 +47,7 @@ class MovieController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="show", methods={"GET"})
+     * @Route("/{id}", name="app_admin_movie_show", methods={"GET"})
      */
     public function show(Movie $movie): Response
     {
@@ -56,7 +57,7 @@ class MovieController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/edit", name="edit", methods={"GET", "POST"})
+     * @Route("/{id}/edit", name="app_admin_movie_edit", methods={"GET", "POST"})
      */
     public function edit(Request $request, Movie $movie, MovieRepository $movieRepository): Response
     {
@@ -64,7 +65,8 @@ class MovieController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $movieRepository->add($movie);
+            $movieRepository->save($movie, true);
+
             return $this->redirectToRoute('app_admin_movie_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -75,12 +77,12 @@ class MovieController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="delete", methods={"POST"})
+     * @Route("/{id}", name="app_admin_movie_delete", methods={"POST"})
      */
     public function delete(Request $request, Movie $movie, MovieRepository $movieRepository): Response
     {
         if ($this->isCsrfTokenValid('delete'.$movie->getId(), $request->request->get('_token'))) {
-            $movieRepository->remove($movie);
+            $movieRepository->remove($movie, true);
         }
 
         return $this->redirectToRoute('app_admin_movie_index', [], Response::HTTP_SEE_OTHER);
