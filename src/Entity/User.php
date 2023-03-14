@@ -167,4 +167,9 @@ class User implements UserInterface
 
         return $this;
     }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->email;
+    }
 }
